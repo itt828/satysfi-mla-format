@@ -1,0 +1,110 @@
+@require: pervasives
+@require: gr
+@require: list
+@require: math
+@require: code
+@require: color
+@require: option
+@require: annot
+
+module MLAFormat: sig
+
+  val document : 'a -> block-text -> document
+    constraint 'a :: (|
+      name : inline-text;
+      last-name : inline-text;
+      class-name : inline-text;
+      professor-name : inline-text;
+      title : inline-text;
+      date : inline-text;
+    |)
+  val font-latin-roman : string * float * float
+  direct +p : [inline-text] block-cmd
+  direct \ref : [string] inline-cmd
+  direct \ref-page : [string] inline-cmd
+
+end = struct
+
+let font-size = 12pt
+let font-latin-roman = (`times-new-roman`, 1., 0.)
+
+let get-standard-context wid =
+  get-initial-context wid (command \math)
+    |> set-font-size font-size
+    |> set-dominant-narrow-script Latin
+    |> set-language Latin English
+    |> set-font Latin font-latin-roman
+    |> set-leading (font-size *' 2.0 )
+  
+let no-pads = (0pt, 0pt, 0pt, 0pt)
+
+let-inline ctx \ref key =
+  let opt = get-cross-reference (key ^ `:num`) in
+  let it = 
+    match opt with
+      | None -> {?}
+      | Some(s) -> embed-string s
+  in
+  inline-frame-breakable no-pads (Annot.link-to-location-frame key None) (read-inline ctx it)
+
+let-inline ctx \ref-page key = 
+  let opt = get-cross-reference (key ^ `:page`) in
+  let it = 
+    match opt with
+      | None -> {?}
+      | Some(s) -> embed-string s
+  in
+  inline-frame-breakable no-pads (Annot.link-to-location-frame key None) (read-inline ctx it)
+
+let paragraph-indent ctx = inline-skip 0.5inch 
+
+let-block ctx +p inner =
+  let ib-inner = read-inline ctx inner in
+  let ib-parag = (paragraph-indent ctx) ++ ib-inner ++ inline-fil in
+  form-paragraph ctx ib-parag
+
+let force-break ctx =
+ discretionary 0 (inline-skip (get-text-width ctx *' 2.)) inline-fil inline-nil
+
+let document record bt =
+  let title = record#title in
+  let name = record#name in
+  let last-name = record#last-name in
+  let professor-name = record#professor-name in
+  let class-name = record#class-name in
+  let date = record#date in
+  let ctx = get-standard-context (210mm -' 2inch) in
+    let bb-title = 
+      line-break false false ctx
+        (inline-fil ++ read-inline ctx title ++ inline-fil)
+    in
+    let bb-info =
+      line-break false false ctx
+        (    read-inline ctx name ++ inline-fil  ++ force-break ctx
+          ++ read-inline ctx professor-name ++ inline-fil ++ force-break ctx
+          ++ read-inline ctx class-name ++ inline-fil ++ force-break ctx
+          ++ read-inline ctx date ++ inline-fil  ++ force-break ctx
+        )
+    in
+    let header-text n = 
+      (read-inline ctx last-name) ++ (read-inline ctx (embed-string (#` `# ^(arabic  n))))
+    in
+    let header n = 
+      line-break false false ctx 
+          ( inline-fil ++   (header-text n))
+    in
+    page-break
+      A4Paper
+      (fun _ -> (|
+        text-origin = (1inch, 1inch);
+        text-height = 297mm -' 2inch
+      |))
+      (fun rec -> (|
+        header-origin = (1inch, 0.5inch);
+        header-content = header rec#page-number;
+        footer-origin = (0pt, 0pt);
+        footer-content = block-nil;
+      |))
+      (bb-info +++ bb-title +++(read-block ctx bt))
+      
+end

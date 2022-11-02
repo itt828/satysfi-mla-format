@@ -1,10 +1,4 @@
-@require: pervasives
-@require: gr
-@require: list
 @require: math
-@require: code
-@require: color
-@require: option
 @require: annot
 
 module MLAFormat: sig
@@ -27,6 +21,8 @@ end = struct
 
 let font-size = 12pt
 let font-latin-roman = (`times-new-roman`, 1., 0.)
+let paper-width = 8.5inch
+let paper-height = 11inch
 
 let get-standard-context wid =
   get-initial-context wid (command \math)
@@ -66,6 +62,7 @@ let-block ctx +p inner =
 let force-break ctx =
  discretionary 0 (inline-skip (get-text-width ctx *' 2.)) inline-fil inline-nil
 
+
 let document record bt =
   let title = record#title in
   let name = record#name in
@@ -94,10 +91,10 @@ let document record bt =
           ( inline-fil ++   (header-text n))
     in
     page-break
-      A4Paper
+      (UserDefinedPaper (paper-width,paper-height))
       (fun _ -> (|
         text-origin = (1inch, 1inch);
-        text-height = 297mm -' 2inch
+        text-height = paper-height -' 2inch
       |))
       (fun rec -> (|
         header-origin = (1inch, 0.5inch);
@@ -108,3 +105,4 @@ let document record bt =
       (bb-info +++ bb-title +++(read-block ctx bt))
       
 end
+

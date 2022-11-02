@@ -13,4 +13,11 @@ MLAFormat.document(|
 +p{Proin porttitor turpis est. Proin vitae lacinia arcu, nec egestas lacus. Curabitur laoreet odio ipsum, vitae commodo ex varius non. Vivamus rhoncus tempus sollicitudin. Nam aliquam, justo in bibendum vestibulum, enim velit varius ante, nec pulvinar urna purus id lectus. Proin euismod commodo sapien. Quisque molestie interdum elit. Etiam vulputate leo ac nibh ultrices vulputate. Vivamus convallis elementum velit volutpat rhoncus. Cras facilisis aliquet est id vulputate.}
 +p{Duis quis laoreet dui. Donec a sem euismod augue mattis vehicula. Duis imperdiet molestie vehicula. Nullam tempor sollicitudin tristique. Mauris leo sapien, mollis ac enim a, auctor pulvinar ipsum. Phasellus nec eros augue. Proin vulputate dignissim purus, ac venenatis ante.}
 +p{Curabitur convallis odio et erat dapibus tincidunt. Sed est leo, tristique eu euismod et, eleifend eget lorem. Praesent vehicula rutrum sollicitudin. Duis felis nulla, laoreet cursus iaculis pellentesque, finibus eu neque. In nisi quam, dictum a nulla at, vestibulum laoreet odio. Vestibulum efficitur, neque eget congue porta, ex massa aliquam nisi, nec consequat ligula dolor at risus. Nullam dapibus in dolor sed porta. In quis lacus tempus, aliquam enim ut, porta diam. Curabitur convallis facilisis varius. }
++p{${\sin}}
+
++p{こんにちは \ref-page(`uu`);}
++p{こんにちは }
+
++p{${\sin}, ああああ\SATySFi;}
 >
+
